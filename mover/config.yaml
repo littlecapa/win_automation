@@ -1,0 +1,20 @@
+PATH:
+  CDROM: "e:"
+  ARCHIVE: "f:/Chess"
+  IMPORT: "C:/Users/littl/Documents/ChessBase/Bases/import"
+  
+CBM:
+  LAST: 214
+
+DEL_PATTERN:
+  ARCHIVE: 
+    - "*.msi"
+    - "Autorun.inf"
+    
+  IMPORT:
+    - "*Endgame*.*"
+    - "*All in One*.*"
+    - "*Start*.*"
+    - "*Strategy*.*"
+    - "*Tactics*.*"
+    - "*Setup*.*"
