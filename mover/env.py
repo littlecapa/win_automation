@@ -34,8 +34,10 @@ class Environment:
     def get_twic_attempts(self):
         return int(self.config_data["TWIC"]["ATTEMPTS"])
 
-    def get_cbm_dir(self):
-        return "CBM " + str(self.get_next_cbm_nr())
+    def get_cbm_dir(self, cbm_nr = 0):
+        if cbm_nr == 0:
+            cbm_nr = self.get_next_cbm_nr()
+        return "CBM " + str(cbm_nr)
     
     def get_start_filename(self):
         return self.START_FILENAME_PATTERN.replace("xxx", str(self.get_next_cbm_nr()))
@@ -46,32 +48,41 @@ class Environment:
     def testfile_exists(self):
         return os.path.exists(self.get_test_filename())
     
-    def get_new_archive_dir(self):
-        return os.path.join(self.get_cbm_archive_path(), self.get_cbm_dir())
+    def get_new_archive_dir(self, cbm_nr = 0):
+        return os.path.join(self.get_cbm_archive_path(), self.get_cbm_dir(cbm_nr))
 
-    def get_new_import_dir(self):
-        return os.path.join(self.get_cbm_import_path(), self.get_cbm_dir())
+    def get_new_import_dir(self, cbm_nr = 0):
+        return os.path.join(self.get_cbm_import_path(), self.get_cbm_dir(cbm_nr))
 
-    def get_cbm_pattern(self):
-        pattern = "*" + str(self.get_next_cbm_nr()) + "*.*"
-        print (pattern)
+    def get_cbm_pattern(self, cbm_nr = 0):
+        if cbm_nr == 0:
+            pattern = "*" + str(self.get_next_cbm_nr()) + "*.*"
+        else:
+            pattern = "*" + str(self.get_next_cbm_nr()) + "*.*"
         return pattern
     
+    def copy_to_import(self, cbm_nr = 0):
+        source = self.get_new_archive_dir(cbm_nr)
+        destination = self.get_new_import_dir(cbm_nr)
+        shutil.copytree(source, destination)
+        self.set_dir_to_777(destination)
+        self.walk_directory_and_cleanup(destination, self.get_cbm_pattern(cbm_nr), keep = True)
+        for pattern in self.config_data["DEL_PATTERN"]["IMPORT"]:
+            self.walk_directory_and_cleanup(destination, pattern, keep = False)
+
+    def reimport_cbm(self, start, end):
+        for i in range(start, end+1):
+            self.copy_to_import(cbm_nr = i)
+
     def copy_cbm(self):
         if self.testfile_exists():
             source = self.get_cdrom_path()
             destination = self.get_new_archive_dir()
-            # shutil.copytree(source, destination)
+            shutil.copytree(source, destination)
             self.set_dir_to_777(destination)
             for pattern in self.config_data["DEL_PATTERN"]["ARCHIVE"]:
                 self.walk_directory_and_cleanup(destination, pattern, keep = False)
-            source = destination
-            destination = self.get_new_import_dir()
-            shutil.copytree(source, destination)
-            self.set_dir_to_777(destination)
-            self.walk_directory_and_cleanup(destination, self.get_cbm_pattern(), keep = True)
-            for pattern in self.config_data["DEL_PATTERN"]["IMPORT"]:
-                self.walk_directory_and_cleanup(destination, pattern, keep = False)
+            self.copy_to_import()
         
     def del_file(self, path, filename):
         file_path = os.path.join(path, filename)
