@@ -22,9 +22,18 @@ class Environment:
     def get_cbm_import_path(self):
         return self.config_data["PATH"]["IMPORT"]
     
+    def get_twic_baseurl(self):
+        return self.config_data["URL"]["TWIC_BASE"]
+    
     def get_next_cbm_nr(self):
         return int(self.config_data["CBM"]["LAST"]) + 1
     
+    def get_next_twic_nr(self):
+        return int(self.config_data["TWIC"]["LAST"]) + 1
+    
+    def get_twic_attempts(self):
+        return int(self.config_data["TWIC"]["ATTEMPTS"])
+
     def get_cbm_dir(self):
         return "CBM " + str(self.get_next_cbm_nr())
     

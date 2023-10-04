@@ -3,14 +3,21 @@ PATH:
   ARCHIVE: "f:/Chess"
   IMPORT: "C:/Users/littl/Documents/ChessBase/Bases/import"
   
+URL:
+  TWIC_BASE: "https://theweekinchess.com/zips"
+
 CBM:
-  LAST: 214
+  LAST: 215
+
+TWIC:
+  LAST: 1506
+  ATTEMPTS: 1
 
 DEL_PATTERN:
   ARCHIVE: 
     - "*.msi"
     - "Autorun.inf"
-    
+
   IMPORT:
     - "*Endgame*.*"
     - "*All in One*.*"
@@ -18,3 +25,5 @@ DEL_PATTERN:
     - "*Strategy*.*"
     - "*Tactics*.*"
     - "*Setup*.*"
+    - "*.pdf"
+    - "*text*.*"
